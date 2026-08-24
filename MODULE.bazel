@@ -1,0 +1,5 @@
+module(name = "bazelclass", version = "1.0")
+bazel_dep( 
+   name = "rules_cc",
+   version = "0.2.22",
+)
