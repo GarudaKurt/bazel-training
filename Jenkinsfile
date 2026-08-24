@@ -20,20 +20,26 @@ pipeline {
            }
        }
        stage('For build Output') {
-           echo 'runnong build test'
-           sh '''
+           steps {
+              echo 'runnong build test'
+              sh '''
                 bazel-bin/main/main
               '''
+          }
        }
        stage('For Rectangle unit test Output') {
-            sh '''
+            steps {
+             sh '''
                   bazel test //lib/Rectangle/UnitTest:testRectangle
                ''' 
+            }
        }
        stage('For Square unit test Output') {
-            sh '''
+            steps { 
+             sh '''
                    bazel test //lib/Square/UnitTest:testSquare
                '''
+            }
        }
 
     }
