@@ -12,10 +12,12 @@ pipeline {
            }
         }
        stage('Test-Build') { 
-           echo 'Build unit test'
-           sh '''
-               bazel test //.. 
-           '''
+          steps {  
+              echo 'Build unit test'
+               sh '''
+                  bazel test //.. 
+               '''
+        }
        }
 
     }
