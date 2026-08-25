@@ -1,6 +1,14 @@
 pipeline {
     agent any
     
+    options { 
+        buildDiscarder ( 
+            logRotator( 
+                numToKeepStr: '20',
+                artifactNumToKeepStr: '10' 
+            )
+        )
+    }
     stages {
       
       stage('Checkout') { 
@@ -13,48 +21,64 @@ pipeline {
            steps {
 	       echo 'Build bazel main file'
                sh '''
-                     bazel build //main:main
+                     mkdir -p investigation
+                     echo "==================== BUILD ===============" \
+                         | tee investigation/build-results.txt
+                     bazel build //main:main 2>&1 \
+                         tee 0a investigation/build-results.txt
                   '''
            }
         }
-       stage('UnitTest-Build') { 
-          steps {  
-              echo 'Build unit test'
+       stage('Run Main') {
+           steps {
                sh '''
-                  bazel test //... 
-               '''
+                    bazel-bin/main/main 2>&1 \ 
+                        | tee -a investigation/build-results.txt 
+                  ''' 
            }
        }
-       stage('For build Output') {
-           steps {
-              echo 'runnong build test'
-              sh '''
-                bazel-bin/main/main
-              '''
-          }
-       }
-       stage('For Rectangle unit test Output') {
+       stage('Rectangle Unit Test') { 
             steps {
-             sh '''
-                  bazel test //lib/Rectangle/UnitTest:testRectangle
-               ''' 
-            }
-       }
-       stage('For Square unit test Output') {
-            steps { 
-             sh '''
-                   bazel test //lib/Square/UnitTest:testSquare
-               '''
-            }
-       }
+                sh '''
+                      echo "" >> investigation/build-results.txt
+                      echo "=============== RECTANGLE TEST ==============="
+                              >> investigation/build-results.txt
 
+                      set -o pipefail
+                      bazel test //lib/Rectangle/UnitTest:testRectangle 2>&1 \
+                           | tee -a investigation/build-results.txt
+                   '''
+            }
+       }
+       stage('Square Unit Test') { 
+            sh '''
+                  echo " >> investigation/build-results.txt
+                  echo "================== SQUARE TEST================="
+                  set -o pipefail
+                  bazel test //lib/Square/UnitTest:testSquare 2>&1 \
+                        | tee -a investigation/build-results.txt
+               '''
+       }
     }
     post {
+        always {
+            junit (
+                testResults: 'bazel-testlogs/**/*.xml',
+                allowEmptyResults: true
+            )
+        }
         success { 
             echo 'Build and unit test passed'
         }
         failure { 
-           echo 'Build or unit test failed'
+          sh '''
+                 tar -czf investigation-results.tar.gz investigation/
+             '''
+             archibeArtifacts ( 
+                artifacts: 'investigation-results.tar.gz',
+                allowEmptyArchive: true,
+                fingerprint: true
+             )
         }
     }
 } 
