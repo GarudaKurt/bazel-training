@@ -23,7 +23,7 @@ pipeline {
                sh '''
                      mkdir -p investigation
                      echo "==================== BUILD ===============" | tee -a investigation/build-results.txt
-                     sit -o pipefail
+                     set -o pipefail
                      bazel build //main:main 2>&1 | tee -a investigation/build-results.txt
                   '''
            }
@@ -31,9 +31,9 @@ pipeline {
        stage('Run Main') {
            steps {
                sh '''
-                       echo " >> investigation/build-results.txt
+                       echo "" >> investigation/build-results.txt
                        echo "=========== MAIN OUTPUT ==============" | tee -a investigation/build-results.txt
-                        sit -o pipefail
+                        set -o pipefail
                         bazel-bin/main/main 2>&1 | tee -a investigation/build-results.txt 
                   ''' 
            }
@@ -52,7 +52,7 @@ pipeline {
        stage('Square Unit Test') { 
             steps {
                 sh '''
-                     echo " >> investigation/build-results.txt
+                     echo "" >> investigation/build-results.txt
                      echo "================== SQUARE TEST=================" | tee -a investtigation/build-results.txt
                      set -o pipefail
                      bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
@@ -74,7 +74,7 @@ pipeline {
           sh '''
                  tar -czf investigation-results.tar.gz investigation/
              '''
-             archibeArtifacts ( 
+             archiveArtifacts ( 
                 artifacts: 'investigation-results.tar.gz',
                 allowEmptyArchive: true,
                 fingerprint: true
