@@ -32,8 +32,9 @@ pipeline {
        stage('Run Main') {
            steps {
                sh '''
-                    bazel-bin/main/main 2>&1 \ 
-                        | tee -a investigation/build-results.txt 
+                       echo " >> investigation/build-results.txt
+                       echo "=========== MAIN OUTPUT ==============" >> investigation/build-results.txt
+                        bazel-bin/main/main 2>&1 | tee -a investigation/build-results.txt 
                   ''' 
            }
        }
@@ -45,8 +46,7 @@ pipeline {
                               >> investigation/build-results.txt
 
                       set -o pipefail
-                      bazel test //lib/Rectangle/UnitTest:testRectangle 2>&1 \
-                           | tee -a investigation/build-results.txt
+                      bazel test //lib/Rectangle/UnitTest:testRectangle 2>&1 | tee -a investigation/build-results.txt
                    '''
             }
        }
@@ -55,8 +55,7 @@ pipeline {
                   echo " >> investigation/build-results.txt
                   echo "================== SQUARE TEST================="
                   set -o pipefail
-                  bazel test //lib/Square/UnitTest:testSquare 2>&1 \
-                        | tee -a investigation/build-results.txt
+                  bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
                '''
        }
     }
