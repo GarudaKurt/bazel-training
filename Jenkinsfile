@@ -23,6 +23,7 @@ pipeline {
                sh '''
                      mkdir -p investigation
                      echo "==================== BUILD ===============" | tee -a investigation/build-results.txt
+                     sit -o pipefail
                      bazel build //main:main 2>&1 | tee -a investigation/build-results.txt
                   '''
            }
@@ -31,7 +32,8 @@ pipeline {
            steps {
                sh '''
                        echo " >> investigation/build-results.txt
-                       echo "=========== MAIN OUTPUT ==============" >> investigation/build-results.txt
+                       echo "=========== MAIN OUTPUT ==============" | tee -a investigation/build-results.txt
+                        sit -o pipefail
                         bazel-bin/main/main 2>&1 | tee -a investigation/build-results.txt 
                   ''' 
            }
@@ -40,8 +42,7 @@ pipeline {
             steps {
                 sh '''
                       echo "" >> investigation/build-results.txt
-                      echo "=============== RECTANGLE TEST ==============="
-                              >> investigation/build-results.txt
+                      echo "=============== RECTANGLE TEST ===============" | tee -a investigation/build-results.txt
 
                       set -o pipefail
                       bazel test //lib/Rectangle/UnitTest:testRectangle 2>&1 | tee -a investigation/build-results.txt
@@ -52,7 +53,7 @@ pipeline {
             steps {
                 sh '''
                      echo " >> investigation/build-results.txt
-                     echo "================== SQUARE TEST================="
+                     echo "================== SQUARE TEST=================" | tee -a investtigation/build-results.txt
                      set -o pipefail
                      bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
                '''
