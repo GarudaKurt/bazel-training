@@ -54,7 +54,7 @@ pipeline {
             steps {
                 sh '''
                      echo "" >> investigation/build-results.txt
-                     echo "================== SQUARE TEST=================" | tee -a investtigation/build-results.txt
+                     echo "================== SQUARE TEST=================" | tee -a investigation/build-results.txt
                      set -o pipefail
                      bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
                '''
