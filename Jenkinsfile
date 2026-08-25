@@ -51,12 +51,14 @@ pipeline {
             }
        }
        stage('Square Unit Test') { 
-            sh '''
-                  echo " >> investigation/build-results.txt
-                  echo "================== SQUARE TEST================="
-                  set -o pipefail
-                  bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
+            steps {
+                sh '''
+                     echo " >> investigation/build-results.txt
+                     echo "================== SQUARE TEST================="
+                     set -o pipefail
+                     bazel test //lib/Square/UnitTest:testSquare 2>&1 | tee -a investigation/build-results.txt
                '''
+            }
        }
     }
     post {
@@ -77,6 +79,7 @@ pipeline {
                 artifacts: 'investigation-results.tar.gz',
                 allowEmptyArchive: true,
                 fingerprint: true
+
              )
         }
     }
