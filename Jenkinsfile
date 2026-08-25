@@ -22,10 +22,8 @@ pipeline {
 	       echo 'Build bazel main file'
                sh '''
                      mkdir -p investigation
-                     echo "==================== BUILD ===============" \
-                         | tee investigation/build-results.txt
-                     bazel build //main:main 2>&1 \
-                         tee 0a investigation/build-results.txt
+                     echo "==================== BUILD ===============" | tee investigation/build-results.txt
+                     bazel build //main:main 2>&1 | tee -a investigation/build-results.txt
                   '''
            }
         }
