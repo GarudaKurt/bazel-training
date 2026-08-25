@@ -21,10 +21,11 @@ pipeline {
            steps {
 	       echo 'Build bazel main file'
                sh '''
+                     rm -rf investigation
                      mkdir -p investigation
-                     echo "==================== BUILD ===============" | tee -a investigation/build-results.txt
+                     echo "==================== BUILD ===============" | tee investigation/build-results.txt
                      set -o pipefail
-                     bazel build //main:main 2>&1 | tee -a investigation/build-results.txt
+                     bazel build //main:main 2>&1 | tee -ainvestigation/build-results.txt
                   '''
            }
         }
