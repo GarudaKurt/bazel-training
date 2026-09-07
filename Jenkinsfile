@@ -1,5 +1,8 @@
+
 pipeline {
-    agent any
+    agent {
+        label 'ubuntu-bazel'
+    }
     
     options { 
         buildDiscarder ( 
@@ -11,11 +14,29 @@ pipeline {
     }
     stages {
       
-      stage('Checkout') { 
+        stage('Checkout') { 
           steps { 
                checkout scm
           } 
-      }
+        }
+        stage('Check Agent') {
+            steps {
+                sh '''
+                    echo "===== Agent Information ====="
+                    echo "User: $(whoami)"
+                    echo "Hostname: $(hostname)"
+                    echo "OS:"
+                    cat /etc/os-release
+                    echo "Java:"
+                    java -version
+                    echo "Bazel:"
+                    bazel --version
+                    echo "Docker:"
+                    docker --version
+                '''
+            }
+        }
+
 
        stage('Build') {
            steps {
