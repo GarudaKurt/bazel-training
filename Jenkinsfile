@@ -31,8 +31,6 @@ pipeline {
                     java -version
                     echo "Bazel:"
                     bazel --version
-                    echo "Docker:"
-                    docker --version
                 '''
             }
         }
